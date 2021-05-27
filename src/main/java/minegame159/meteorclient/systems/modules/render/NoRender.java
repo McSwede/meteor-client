@@ -7,17 +7,21 @@ package minegame159.meteorclient.systems.modules.render;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import minegame159.meteorclient.settings.BoolSetting;
-import minegame159.meteorclient.settings.EntityTypeListSetting;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
+import meteordevelopment.orbit.EventHandler;
+import minegame159.meteorclient.events.world.ChunkOcclusionEvent;
+import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 
 public class NoRender extends Module {
-    private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    public enum BannerRenderMode {
+        Everything,
+        Pillar,
+        None
+    }
+
     private final SettingGroup sgOverlay = settings.createGroup("Overlay");
     private final SettingGroup sgHUD = settings.createGroup("HUD");
     private final SettingGroup sgWorld = settings.createGroup("World");
@@ -183,6 +187,27 @@ public class NoRender extends Module {
             .build()
     );
 
+    private final Setting<Boolean> noCaveCulling = sgWorld.add(new BoolSetting.Builder()
+            .name("no-cave-culling")
+            .description("Disables Minecraft's cave culling algorithm.")
+            .defaultValue(false)
+            .build()
+    );
+
+    private final Setting<Boolean> noMapMarkers = sgWorld.add(new BoolSetting.Builder()
+            .name("no-map-markers")
+            .description("Disables markers on maps.")
+            .defaultValue(false)
+            .build()
+    );
+
+    private final Setting<BannerRenderMode> bannerRender = sgWorld.add(new EnumSetting.Builder<BannerRenderMode>()
+            .name("banner-render")
+            .description("Changes rendering of banners.")
+            .defaultValue(BannerRenderMode.Everything)
+            .build()
+    );
+
     // Entity
 
     private final Setting<Object2BooleanMap<EntityType<?>>> entities = sgEntity.add(new EntityTypeListSetting.Builder()
@@ -298,6 +323,20 @@ public class NoRender extends Module {
         return isActive() && noFallingBlocks.get();
     }
 
+    @EventHandler
+    private void onChunkOcclusion(ChunkOcclusionEvent event) {
+        if (noCaveCulling.get()) event.cancel();
+    }
+
+    public boolean noMapMarkers() {
+        return isActive() && noMapMarkers.get();
+    }
+
+    public BannerRenderMode getBannerRenderMode() {
+        if (!isActive()) return BannerRenderMode.Everything;
+        else return bannerRender.get();
+    }
+
     // Entity
 
     public boolean noEntity(Entity entity) {
@@ -307,4 +346,5 @@ public class NoRender extends Module {
     public boolean noArmor() {
         return isActive() && noArmor.get();
     }
+
 }

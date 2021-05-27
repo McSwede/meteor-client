@@ -10,19 +10,22 @@ import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import joptsimple.internal.Strings;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.utils.world.TickRate;
 import minegame159.meteorclient.MeteorClient;
 import minegame159.meteorclient.events.packets.PacketEvent;
 import minegame159.meteorclient.events.world.TickEvent;
 import minegame159.meteorclient.systems.commands.Command;
-import minegame159.meteorclient.utils.player.ChatUtils;
+import minegame159.meteorclient.utils.world.TickRate;
+import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.command.CommandSource;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.ServerAddress;
 import net.minecraft.network.packet.c2s.play.RequestCommandCompletionsC2SPacket;
 import net.minecraft.network.packet.s2c.play.CommandSuggestionsS2CPacket;
 import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.text.BaseText;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 
 import java.net.InetAddress;
@@ -54,12 +57,6 @@ public class ServerCommand extends Command {
             return SINGLE_SUCCESS;
         }));
 
-        builder.then(literal("gamerules").executes(ctx -> {
-            CompoundTag tag = mc.world.getGameRules().toNbt();
-            tag.getKeys().forEach((key) -> ChatUtils.prefixInfo("Server", "%s: %s", key, tag.getString(key)));
-            return SINGLE_SUCCESS;
-        }));
-
         builder.then(literal("plugins").executes(ctx -> {
             ticks = 0;
             MeteorClient.EVENT_BUS.subscribe(this);
@@ -69,11 +66,11 @@ public class ServerCommand extends Command {
 
         builder.then(literal("tps").executes(ctx -> {
             float tps = TickRate.INSTANCE.getTickRate();
-            Formatting color = Formatting.WHITE;
+            Formatting color;
             if (tps > 17.0f) color = Formatting.GREEN;
             else if (tps > 12.0f) color = Formatting.YELLOW;
             else color = Formatting.RED;
-            ChatUtils.prefixInfo("Server", "Current TPS: %s%.2f(default).", color, tps);
+            info("Current TPS: %s%.2f(default).", color, tps);
             return SINGLE_SUCCESS;
         }));
     }
@@ -82,8 +79,8 @@ public class ServerCommand extends Command {
         if (mc.isIntegratedServerRunning()) {
             IntegratedServer server = mc.getServer();
 
-            ChatUtils.prefixInfo("Server","Singleplayer");
-            if (server != null) ChatUtils.prefixInfo("Server", "Version: %s", server.getVersion());
+            info("Singleplayer");
+            if (server != null) info("Version: %s", server.getVersion());
 
             return;
         }
@@ -91,7 +88,7 @@ public class ServerCommand extends Command {
         ServerInfo server = mc.getCurrentServerEntry();
 
         if (server == null) {
-            ChatUtils.prefixError("Server","Couldn't obtain any server information.");
+            info("Couldn't obtain any server information.");
             return;
         }
 
@@ -100,24 +97,70 @@ public class ServerCommand extends Command {
             ipv4 = InetAddress.getByName(server.address).getHostAddress();
         } catch (UnknownHostException ignored) {}
 
+        BaseText ipText;
+
         if (ipv4.isEmpty()) {
-            ChatUtils.prefixInfo("Server", "IP: %s", server.address);
+            ipText = new LiteralText(Formatting.GRAY + server.address);
+            ipText.setStyle(ipText.getStyle()
+                .withClickEvent(new ClickEvent(
+                    ClickEvent.Action.COPY_TO_CLIPBOARD, 
+                    server.address
+                ))
+                .withHoverEvent(new HoverEvent(
+                    HoverEvent.Action.SHOW_TEXT, 
+                    new LiteralText("Copy to clipboard")
+                ))
+            );
         }
         else {
-            ChatUtils.prefixInfo("Server", "IP: %s (%s)", server.address, ipv4);
+            ipText = new LiteralText(Formatting.GRAY + server.address);
+            ipText.setStyle(ipText.getStyle()
+                .withClickEvent(new ClickEvent(
+                    ClickEvent.Action.COPY_TO_CLIPBOARD, 
+                    server.address
+                ))
+                .withHoverEvent(new HoverEvent(
+                    HoverEvent.Action.SHOW_TEXT, 
+                    new LiteralText("Copy to clipboard")
+                ))
+            );
+            BaseText ipv4Text = new LiteralText(String.format("%s (%s)", Formatting.GRAY, ipv4));
+            ipv4Text.setStyle(ipText.getStyle()
+                .withClickEvent(new ClickEvent(
+                    ClickEvent.Action.COPY_TO_CLIPBOARD, 
+                    ipv4
+                ))
+                .withHoverEvent(new HoverEvent(
+                    HoverEvent.Action.SHOW_TEXT, 
+                    new LiteralText("Copy to clipboard")
+                ))
+            );
+            ipText.append(ipv4Text);
         }
+        info(
+            new LiteralText(String.format("%sIP: ", Formatting.GRAY))
+            .append(ipText)
+        );
 
-        ChatUtils.prefixInfo("Server", "Port: %d", ServerAddress.parse(server.address).getPort());
+        info("Port: %d", ServerAddress.parse(server.address).getPort());
 
-        ChatUtils.prefixInfo("Server","Type: %s", mc.player.getServerBrand() != null ? mc.player.getServerBrand() : "unknown");
+        info("Type: %s", mc.player.getServerBrand() != null ? mc.player.getServerBrand() : "unknown");
 
-        ChatUtils.prefixInfo("Server", "Motd: %s", server.label != null ? server.label.getString() : "unknown");
+        info("Motd: %s", server.label != null ? server.label.getString() : "unknown");
 
-        ChatUtils.prefixInfo("Server", "Version: %s", server.version.getString());
+        info("Version: %s", server.version.getString());
 
-        ChatUtils.prefixInfo("Server","Protocol version: %d", server.protocolVersion);
+        info("Protocol version: %d", server.protocolVersion);
 
-        ChatUtils.prefixInfo("Server", "Difficulty: %s", mc.world.getDifficulty().getTranslatableName().getString());
+        info("Difficulty: %s", mc.world.getDifficulty().getTranslatableName().getString());
+
+        ClientCommandSource cmdSource = mc.getNetworkHandler().getCommandSource();
+        int permission_level = 5;
+        while (permission_level > 0) {
+            if (cmdSource.hasPermissionLevel(permission_level)) break;
+            permission_level--;
+        }
+        info("Permission level: %d", permission_level);
     }
     
     @EventHandler
@@ -125,7 +168,7 @@ public class ServerCommand extends Command {
         ticks++;
 
         if (ticks >= 5000) {
-            ChatUtils.prefixError("Server", "Plugins check timed out");
+            error("Plugins check timed out");
             MeteorClient.EVENT_BUS.unsubscribe(this);
             ticks = 0;
         }
@@ -140,7 +183,7 @@ public class ServerCommand extends Command {
                 Suggestions matches = packet.getSuggestions();
 
                 if (matches == null) {
-                    ChatUtils.prefixError("Server", "Invalid Packet.");
+                    error("Invalid Packet.");
                     return;
                 }
 
@@ -161,9 +204,9 @@ public class ServerCommand extends Command {
                 }
 
                 if (!plugins.isEmpty()) {
-                    ChatUtils.prefixInfo("Server", "Plugins (%d): %s ", plugins.size(), Strings.join(plugins.toArray(new String[0]), ", "));
+                    info("Plugins (%d): %s ", plugins.size(), Strings.join(plugins.toArray(new String[0]), ", "));
                 } else {
-                    ChatUtils.prefixError("Server", "No plugins found.");
+                    error("No plugins found.");
                 }
 
                 ticks = 0;
@@ -171,7 +214,7 @@ public class ServerCommand extends Command {
             }
 
         } catch (Exception e) {
-            ChatUtils.prefixError("Server", "An error occurred while trying to find plugins");
+            error("An error occurred while trying to find plugins");
             ticks = 0;
             MeteorClient.EVENT_BUS.unsubscribe(this);
         }

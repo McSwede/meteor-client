@@ -24,8 +24,6 @@ public class Outlines {
     public static OutlineVertexConsumerProvider vertexConsumerProvider;
     private static ShaderEffect outlinesShader;
 
-    public static float fillAlpha = 0.35f;
-
     public static void load() {
         try {
             MinecraftClient mc = MinecraftClient.getInstance();
@@ -46,8 +44,6 @@ public class Outlines {
     }
 
     public static void beginRender() {
-        ((ShaderEffectAccessor) outlinesShader).getPasses().get(0).getProgram().getUniformByName("fillAlpha").set(fillAlpha);
-
         outlinesFbo.clear(MinecraftClient.IS_SYSTEM_MAC);
         MinecraftClient.getInstance().getFramebuffer().beginWrite(false);
     }
@@ -73,5 +69,9 @@ public class Outlines {
 
     public static void onResized(int width, int height) {
         if (outlinesShader != null) outlinesShader.setupDimensions(width, height);
+    }
+
+    public static void setUniform(String name, float value) {
+        ((ShaderEffectAccessor) outlinesShader).getPasses().get(0).getProgram().getUniformByName(name).set(value);
     }
 }

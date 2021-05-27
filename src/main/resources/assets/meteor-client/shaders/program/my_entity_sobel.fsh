@@ -1,7 +1,9 @@
 #version 120
 
 uniform sampler2D DiffuseSampler;
-uniform float fillAlpha;
+uniform float width;
+uniform float shapeMode;
+uniform float fillOpacity;
 
 varying vec2 texCoord;
 varying vec2 oneTexel;
@@ -9,27 +11,21 @@ varying vec2 oneTexel;
 void main() {
     vec4 center = texture2D(DiffuseSampler, texCoord);
 
-    if (center.a != 0) {
-        gl_FragColor = vec4(center.rgb, fillAlpha);
-        return;
+    int widthInt = int(width);
+    int shapeModeInt = int(shapeMode);
+
+    if (center.a != 0.0) {
+        if (shapeModeInt == 0) discard;
+        center = vec4(center.rgb, center.a * fillOpacity);
+    } else {
+        if (shapeModeInt == 1) discard;
+        for (int x = -widthInt; x <= widthInt; x++) {
+            for (int y = -widthInt; y <= widthInt; y++) {
+                vec4 offset = texture2D(DiffuseSampler, texCoord + vec2(x, y) * oneTexel);
+                if (offset.a != 0.0) center = offset;
+            }
+        }
     }
 
-    vec4 left = texture2D(DiffuseSampler, texCoord - vec2(oneTexel.x, 0.0));
-    vec4 right = texture2D(DiffuseSampler, texCoord + vec2(oneTexel.x, 0.0));
-    vec4 up = texture2D(DiffuseSampler, texCoord - vec2(0.0, oneTexel.y));
-    vec4 down = texture2D(DiffuseSampler, texCoord + vec2(0.0, oneTexel.y));
-
-    float leftDiff  = abs(center.a - left.a);
-    float rightDiff = abs(center.a - right.a);
-    float upDiff    = abs(center.a - up.a);
-    float downDiff  = abs(center.a - down.a);
-
-    float a = clamp(leftDiff + rightDiff + upDiff + downDiff, 0.0, 1.0);
-    vec3 color;
-    if (left.a != 0) color = left.rgb;
-    else if (right.a != 0) color = right.rgb;
-    else if (up.a != 0) color = up.rgb;
-    else color = down.rgb;
-
-    gl_FragColor = vec4(color, a);
+    gl_FragColor = center;
 }
