@@ -43,9 +43,9 @@ public class EntityUtils {
     }
 
     public static GameMode getGameMode(PlayerEntity player) {
-        if (player == null) return GameMode.NOT_SET;
+        if (player == null) return GameMode.SPECTATOR;
         PlayerListEntry playerListEntry = mc.getNetworkHandler().getPlayerListEntry(player.getUuid());
-        if (playerListEntry == null) return GameMode.NOT_SET;
+        if (playerListEntry == null) return GameMode.SPECTATOR;
         return playerListEntry.getGameMode();
     }
 
@@ -113,5 +113,11 @@ public class EntityUtils {
         List<BlockPos> posList = getSurroundBlocks(player);
         posList.sort(Comparator.comparingDouble(PlayerUtils::distanceTo));
         return posList.isEmpty() ? null : posList.get(0);
+    }
+
+    public static String getName(Entity entity) {
+        if (entity == null) return null;
+        if (entity instanceof PlayerEntity) return entity.getEntityName();
+        return entity.getType().getName().getString();
     }
 }

@@ -74,9 +74,9 @@ public class ConfigTab extends Tab {
     );
 
     public static final Setting<Integer> rotationHoldTicks = sgGeneral.add(new IntSetting.Builder()
-            .name("rotation-hold-ticks")
+            .name("rotation-hold")
             .description("Hold long to hold server side rotation when not sending any packets.")
-            .defaultValue(9)
+            .defaultValue(4)
             .onChanged(integer -> Config.get().rotationHoldTicks = integer)
             .onModuleActivated(integerSetting -> integerSetting.set(Config.get().rotationHoldTicks))
             .build()
@@ -134,6 +134,15 @@ public class ConfigTab extends Tab {
             .defaultValue(true)
             .onChanged(aBool -> Config.get().titleScreenCredits = aBool)
             .onModuleActivated(boolSetting -> boolSetting.set(Config.get().titleScreenCredits))
+            .build()
+    );
+
+    public static final Setting<Boolean> titleScreenSplashes = sgScreens.add(new BoolSetting.Builder()
+            .name("title-screen-splashes")
+            .description("Show Meteor splash texts on title screen")
+            .defaultValue(true)
+            .onChanged(aBool -> Config.get().titleScreenSplashes = aBool)
+            .onModuleActivated(boolSetting -> boolSetting.set(Config.get().titleScreenSplashes))
             .build()
     );
 
