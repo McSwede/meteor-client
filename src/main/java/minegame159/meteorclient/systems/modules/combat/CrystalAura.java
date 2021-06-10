@@ -19,7 +19,7 @@ import minegame159.meteorclient.mixininterface.IBox;
 import minegame159.meteorclient.mixininterface.IRaycastContext;
 import minegame159.meteorclient.mixininterface.IVec3d;
 import minegame159.meteorclient.renderer.ShapeMode;
-import minegame159.meteorclient.rendering.text.TextRenderer;
+import minegame159.meteorclient.renderer.text.TextRenderer;
 import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.friends.Friends;
 import minegame159.meteorclient.systems.modules.Categories;
@@ -194,7 +194,7 @@ public class CrystalAura extends Module {
     private final Setting<Double> placeWallsRange = sgPlace.add(new DoubleSetting.Builder()
             .name("place-walls-range")
             .description("Range in which to place crystals when behind blocks.")
-            .defaultValue(3.5)
+            .defaultValue(4.5)
             .min(0)
             .sliderMax(6)
             .build()
@@ -316,7 +316,7 @@ public class CrystalAura extends Module {
     private final Setting<Double> breakWallsRange = sgBreak.add(new DoubleSetting.Builder()
             .name("break-walls-range")
             .description("Range in which to break crystals when behind blocks.")
-            .defaultValue(3)
+            .defaultValue(4.5)
             .min(0)
             .sliderMax(6)
             .build()
