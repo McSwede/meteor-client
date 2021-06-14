@@ -26,13 +26,11 @@ import minegame159.meteorclient.systems.modules.Modules;
 import minegame159.meteorclient.systems.modules.misc.DiscordPresence;
 import minegame159.meteorclient.utils.Utils;
 import minegame159.meteorclient.utils.misc.FakeClientPlayer;
-import minegame159.meteorclient.utils.misc.MeteorPlayers;
 import minegame159.meteorclient.utils.misc.Names;
 import minegame159.meteorclient.utils.misc.input.KeyAction;
 import minegame159.meteorclient.utils.misc.input.KeyBinds;
 import minegame159.meteorclient.utils.network.Capes;
 import minegame159.meteorclient.utils.network.MeteorExecutor;
-import minegame159.meteorclient.utils.network.OnlinePlayers;
 import minegame159.meteorclient.utils.player.EChestMemory;
 import minegame159.meteorclient.utils.player.Rotations;
 import minegame159.meteorclient.utils.render.Outlines;
@@ -102,7 +100,6 @@ public class MeteorClient implements ClientModInitializer {
         EChestMemory.init();
         Rotations.init();
         Names.init();
-        MeteorPlayers.init();
         FakeClientPlayer.init();
         PostProcessRenderer.init();
         Tabs.init();
@@ -119,7 +116,6 @@ public class MeteorClient implements ClientModInitializer {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             Systems.save();
-            OnlinePlayers.leave();
             GuiThemes.save();
         }));
 
