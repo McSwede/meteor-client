@@ -491,6 +491,7 @@ public class Modules extends System<Modules> {
         add(new WaypointsModule());
         add(new Xray());
         add(new Zoom());
+        add(new Blur());
     }
 
     private void initWorld() {
@@ -504,7 +505,6 @@ public class Modules extends System<Modules> {
         add(new AutoShearer());
         add(new AutoSign());
         add(new AutoSmelter());
-        add(new AutoSteal());
         add(new BuildHeight());
         add(new EChestFarmer());
         add(new EndermanLook());
