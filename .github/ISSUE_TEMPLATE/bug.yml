@@ -3,11 +3,14 @@ description: Report a bug to help us improve Meteor.
 title: '[Bug] '
 labels: bug
 body:
+
   - type: textarea
     id: description
     attributes:
       label: Describe the bug
-      description: A clear and concise description of what the issue is.
+      description: |
+        A clear and concise description of what the issue is.
+        Provide as much information as possible, videos, crash reports, etc.
     validations:
       required: true
   - type: textarea
@@ -40,8 +43,17 @@ body:
     attributes:
       label: Operating System
       options:
-        - label: macOS
-        - label: Windows
-        - label: Linux
+        - macOS
+        - Windows
+        - Linux
     validations:
       required: true
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Before submitting a bug report
+      options:
+        - label: This bug wasn't already reported.
+          required: true
+        - label: This is a valid bug and I have checked all settings.
+          required: true
