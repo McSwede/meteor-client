@@ -224,7 +224,7 @@ public class ServerCommand extends Command {
         if (ANTICHEAT_LIST.contains(name)) {
             return String.format("%s%s(default)", Formatting.RED, name);
         }
-        else if (name.contains("exploit") || name.contains("cheat") || name.contains("illegal") || name.contains("vanish") || name.contains("vpn")) {
+        else if (name.contains("exploit") || name.contains("cheat") || name.contains("illegal") || name.contains("vanish") || name.contains("vpn") || name.contains("xray")) {
             return String.format("%s%s(default)", Formatting.RED, name);
         }
 
