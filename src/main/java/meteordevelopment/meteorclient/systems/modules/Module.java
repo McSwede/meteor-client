@@ -20,10 +20,11 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public abstract class Module implements ISerializable<Module> {
+public abstract class Module implements ISerializable<Module>, Comparable<Module> {
     protected final MinecraftClient mc;
 
     public final Category category;
@@ -35,7 +36,6 @@ public abstract class Module implements ISerializable<Module> {
     public final Settings settings = new Settings();
 
     private boolean active;
-    private boolean visible = true;
 
     public boolean serialize = true;
     public boolean runInMainMenu = false;
@@ -110,14 +110,6 @@ public abstract class Module implements ISerializable<Module> {
         ChatUtils.error(title, message, args);
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
     public boolean isActive() {
         return active;
     }
@@ -137,7 +129,6 @@ public abstract class Module implements ISerializable<Module> {
         tag.put("settings", settings.toTag());
 
         tag.putBoolean("active", active);
-        tag.putBoolean("visible", visible);
 
         return tag;
     }
@@ -156,7 +147,6 @@ public abstract class Module implements ISerializable<Module> {
 
         boolean active = tag.getBoolean("active");
         if (active != isActive()) toggle();
-        setVisible(tag.getBoolean("visible"));
 
         return this;
     }
@@ -172,5 +162,10 @@ public abstract class Module implements ISerializable<Module> {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public int compareTo(@NotNull Module o) {
+        return name.compareTo(o.name);
     }
 }
