@@ -236,6 +236,8 @@ public class Utils {
     }
 
     public static int search(String text, String filter) {
+        if (filter.isEmpty()) return 1;
+
         int wordsFound = 0;
         text = text.toLowerCase(Locale.ROOT);
         String[] words = filter.toLowerCase(Locale.ROOT).split(" ");
@@ -492,7 +494,7 @@ public class Utils {
     }
 
     @SafeVarargs
-    public static <T> Object2BooleanOpenHashMap<T> asObject2BooleanOpenHashMap(T... checked) {
+    public static <T> Object2BooleanOpenHashMap<T> asO2BMap(T... checked) {
         Map<T, Boolean> map = new HashMap<>();
         for (T item : checked)
             map.put(item, true);

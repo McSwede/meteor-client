@@ -42,7 +42,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.Nullable;
@@ -461,7 +460,6 @@ public class Modules extends System<Modules> {
         add(new CameraTweaks());
         add(new Chams());
         add(new CityESP());
-        add(new CustomFOV());
         add(new EntityOwner());
         add(new ESP());
         add(new Freecam());
@@ -489,6 +487,7 @@ public class Modules extends System<Modules> {
         add(new Xray());
         add(new Zoom());
         add(new Blur());
+        add(new PopChams());
     }
 
     private void initWorld() {

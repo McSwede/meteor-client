@@ -25,7 +25,6 @@ public class KeybindSetting extends Setting<Keybind> {
         super(name, description, defaultValue, onChanged, onModuleActivated, visible);
 
         this.action = action;
-
         MeteorClient.EVENT_BUS.subscribe(this);
     }
 
@@ -91,42 +90,11 @@ public class KeybindSetting extends Setting<Keybind> {
         return get();
     }
 
-    public static class Builder {
-        private String name = "undefined", description = "";
-        private Keybind defaultValue = Keybind.none();
-        private Consumer<Keybind> onChanged;
-        private Consumer<Setting<Keybind>> onModuleActivated;
-        private IVisible visible;
+    public static class Builder extends SettingBuilder<Builder, Keybind, KeybindSetting> {
         private Runnable action;
 
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public Builder defaultValue(Keybind defaultValue) {
-            this.defaultValue = defaultValue;
-            return this;
-        }
-
-        public Builder onChanged(Consumer<Keybind> onChanged) {
-            this.onChanged = onChanged;
-            return this;
-        }
-
-        public Builder onModuleActivated(Consumer<Setting<Keybind>> onModuleActivated) {
-            this.onModuleActivated = onModuleActivated;
-            return this;
-        }
-
-        public Builder visible(IVisible visible) {
-            this.visible = visible;
-            return this;
+        public Builder() {
+            super(Keybind.none());
         }
 
         public Builder action(Runnable action) {
@@ -134,6 +102,7 @@ public class KeybindSetting extends Setting<Keybind> {
             return this;
         }
 
+        @Override
         public KeybindSetting build() {
             return new KeybindSetting(name, description, defaultValue, onChanged, onModuleActivated, visible, action);
         }
