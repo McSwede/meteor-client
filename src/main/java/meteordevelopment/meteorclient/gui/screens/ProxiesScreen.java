@@ -21,12 +21,11 @@ import meteordevelopment.meteorclient.systems.proxies.Proxies;
 import meteordevelopment.meteorclient.systems.proxies.Proxy;
 import meteordevelopment.meteorclient.systems.proxies.ProxyType;
 import meteordevelopment.meteorclient.utils.misc.NbtUtils;
-import net.minecraft.nbt.NbtCompound;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static meteordevelopment.meteorclient.utils.Utils.mc;
+import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class ProxiesScreen extends WindowScreen {
     private final List<WCheckbox> checkboxes = new ArrayList<>();
@@ -113,14 +112,7 @@ public class ProxiesScreen extends WindowScreen {
 
     @Override
     public boolean fromClipboard() {
-        NbtCompound clipboard = NbtUtils.fromClipboard(Proxies.get().toTag());
-
-        if (clipboard != null) {
-            Proxies.get().fromTag(clipboard);
-            return true;
-        }
-
-        return false;
+        return NbtUtils.fromClipboard(Proxies.get());
     }
 
     protected class EditProxyScreen extends WindowScreen {
