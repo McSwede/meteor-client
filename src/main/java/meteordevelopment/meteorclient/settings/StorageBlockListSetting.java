@@ -35,7 +35,7 @@ public class StorageBlockListSetting extends Setting<List<BlockEntityType<?>>> {
     @Override
     public void reset(boolean callbacks) {
         value = new ArrayList<>(defaultValue);
-        if (callbacks) changed();
+        if (callbacks) onChanged();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class StorageBlockListSetting extends Setting<List<BlockEntityType<?>>> {
             if (type != null) get().add(type);
         }
 
-        changed();
+        onChanged();
         return get();
     }
 
@@ -109,6 +109,11 @@ public class StorageBlockListSetting extends Setting<List<BlockEntityType<?>>> {
     private static class SRegistry extends Registry<BlockEntityType<?>> {
         public SRegistry() {
             super(RegistryKey.ofRegistry(new Identifier("meteor-client", "storage-blocks")), Lifecycle.stable());
+        }
+
+        @Override
+        public int size() {
+            return STORAGE_BLOCKS.length;
         }
 
         @Nullable
@@ -140,7 +145,7 @@ public class StorageBlockListSetting extends Setting<List<BlockEntityType<?>>> {
         }
 
         @Override
-        protected Lifecycle getEntryLifecycle(BlockEntityType<?> object) {
+        public Lifecycle getEntryLifecycle(BlockEntityType<?> object) {
             return null;
         }
 

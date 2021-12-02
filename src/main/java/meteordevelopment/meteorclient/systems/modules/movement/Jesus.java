@@ -6,6 +6,7 @@
 package meteordevelopment.meteorclient.systems.modules.movement;
 
 import baritone.api.BaritoneAPI;
+import com.google.common.collect.Streams;
 import meteordevelopment.meteorclient.events.entity.player.CanWalkOnFluidEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.CollisionShapeEvent;
@@ -295,8 +296,9 @@ public class Jesus extends Module {
         boolean foundLiquid = false;
         boolean foundSolid = false;
 
-        List<Box> blockCollisions = mc.world
-            .getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0, -0.5, 0))
+
+
+        List<Box> blockCollisions = Streams.stream(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0, -0.5, 0)))
             .map(VoxelShape::getBoundingBox)
             .collect(Collectors.toCollection(ArrayList::new));
 

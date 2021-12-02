@@ -56,7 +56,6 @@ public class Modules extends System<Modules> {
     public static final ModuleRegistry REGISTRY = new ModuleRegistry();
 
     private static final List<Category> CATEGORIES = new ArrayList<>();
-    public static boolean REGISTERING_CATEGORIES;
 
     private final List<Module> modules = new ArrayList<>();
     private final Map<Class<? extends Module>, Module> moduleInstances = new HashMap<>();
@@ -535,7 +534,6 @@ public class Modules extends System<Modules> {
         add(new PacketCanceller());
         add(new SoundBlocker());
         add(new Spam());
-        add(new TPSSync());
         add(new VanillaSpoof());
         add(new InventoryTweaks());
     }
@@ -543,6 +541,11 @@ public class Modules extends System<Modules> {
     public static class ModuleRegistry extends Registry<Module> {
         public ModuleRegistry() {
             super(RegistryKey.ofRegistry(new Identifier("meteor-client", "modules")), Lifecycle.stable());
+        }
+
+        @Override
+        public int size() {
+            return Modules.get().getAll().size();
         }
 
         @Override
@@ -571,7 +574,7 @@ public class Modules extends System<Modules> {
         }
 
         @Override
-        protected Lifecycle getEntryLifecycle(Module object) {
+        public Lifecycle getEntryLifecycle(Module object) {
             return null;
         }
 
