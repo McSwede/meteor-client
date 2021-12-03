@@ -251,4 +251,16 @@ public class BlockUtils {
         Potential,
         Always
     }
+
+    private static BlockPos.Mutable exposedPos = new BlockPos.Mutable();
+    public static boolean isExposed(BlockPos blockPos) {
+        for (Direction direction : Direction.values()) {
+            exposedPos.set(blockPos, direction.getVector());
+            BlockState state = mc.world.getBlockState(exposedPos);
+            if (!state.isOpaque())
+                return true;
+        }
+        return false;
+    }
+
 }
