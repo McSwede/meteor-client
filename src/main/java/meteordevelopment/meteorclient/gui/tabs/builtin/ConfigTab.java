@@ -63,43 +63,6 @@ public class ConfigTab extends Tab {
         .build()
     );
 
-    public static final Setting<Boolean> titleScreenCredits = sgVisual.add(new BoolSetting.Builder()
-        .name("title-screen-credits")
-        .description("Show Meteor credits on title screen")
-        .defaultValue(true)
-        .onChanged(aBool -> Config.get().titleScreenCredits = aBool)
-        .onModuleActivated(boolSetting -> boolSetting.set(Config.get().titleScreenCredits))
-        .build()
-    );
-
-    public static final Setting<Boolean> titleScreenSplashes = sgVisual.add(new BoolSetting.Builder()
-        .name("title-screen-splashes")
-        .description("Show Meteor splash texts on title screen")
-        .defaultValue(true)
-        .onChanged(aBool -> Config.get().titleScreenSplashes = aBool)
-        .onModuleActivated(boolSetting -> boolSetting.set(Config.get().titleScreenSplashes))
-        .build()
-    );
-
-    public static final Setting<Boolean> customWindowTitle = sgVisual.add(new BoolSetting.Builder()
-        .name("custom-window-title")
-        .description("Show custom text in the window title.")
-        .defaultValue(false)
-        .onChanged(aBool -> Config.get().customWindowTitle = aBool)
-        .onModuleActivated(boolSetting -> boolSetting.set(Config.get().customWindowTitle))
-        .build()
-    );
-
-    public static final Setting<String> customWindowTitleText = sgVisual.add(new StringSetting.Builder()
-        .name("window-title-text")
-        .description("The text it displays in the window title.")
-        .defaultValue("Minecraft {mc_version} - Meteor Client {version}")
-        .onChanged(titleText -> Config.get().customWindowTitleText = titleText)
-        .onModuleActivated(stringSetting -> stringSetting.set(Config.get().customWindowTitleText))
-        .visible(customWindowTitle::get)
-        .build()
-    );
-
     // Chat
 
     public static final Setting<String> prefix = sgChat.add(new StringSetting.Builder()

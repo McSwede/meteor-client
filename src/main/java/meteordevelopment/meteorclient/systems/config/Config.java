@@ -23,16 +23,12 @@ import java.util.List;
 public class Config extends System<Config> {
     // Version
     public Version version;
-    public String devBuild;
+    public String devBuild = "";
 
     // Visual
     public String font = ConfigTab.font.get();
     public boolean customFont = ConfigTab.customFont.get();
     public double rainbowSpeed = ConfigTab.rainbowSpeed.get();
-    public boolean titleScreenCredits = ConfigTab.titleScreenCredits.get();
-    public boolean titleScreenSplashes = ConfigTab.titleScreenSplashes.get();
-    public boolean customWindowTitle = ConfigTab.customWindowTitle.get();
-    public String customWindowTitleText = ConfigTab.customWindowTitleText.get();
 
     // Chat
     public String prefix = ConfigTab.prefix.get();
@@ -80,11 +76,6 @@ public class Config extends System<Config> {
         tag.putBoolean("chatFeedback", chatFeedback);
         tag.putBoolean("deleteChatFeedback", deleteChatFeedback);
 
-        tag.putBoolean("titleScreenCredits", titleScreenCredits);
-        tag.putBoolean("titleScreenSplashes", titleScreenSplashes);
-        tag.putBoolean("customWindowTitle", customWindowTitle);
-        tag.putString("customWindowTitleText", customWindowTitleText);
-
         tag.putInt("rotationHoldTicks", rotationHoldTicks);
         tag.putBoolean("useTeamColor", useTeamColor);
         tag.put("dontShowAgainPrompts", listToTag(dontShowAgainPrompts));
@@ -102,11 +93,6 @@ public class Config extends System<Config> {
         prefixOpensConsole = getBoolean(tag, "prefixOpensConsole", ConfigTab.prefixOpensConsole);
         chatFeedback = getBoolean(tag, "chatFeedback", ConfigTab.chatFeedback);
         deleteChatFeedback = getBoolean(tag, "deleteChatFeedback", ConfigTab.deleteChatFeedback);
-
-        titleScreenCredits = getBoolean(tag, "titleScreenCredits", ConfigTab.titleScreenCredits);
-        titleScreenSplashes = getBoolean(tag, "titleScreenSplashes", ConfigTab.titleScreenSplashes);
-        customWindowTitle = getBoolean(tag, "customWindowTitle", ConfigTab.customWindowTitle);
-        customWindowTitleText = getString(tag, "customWindowTitleText", ConfigTab.customWindowTitleText);
 
         rotationHoldTicks = getInt(tag, "rotationHoldTicks", ConfigTab.rotationHoldTicks);
         useTeamColor = getBoolean(tag, "useTeamColor", ConfigTab.useTeamColor);

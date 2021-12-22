@@ -7,7 +7,7 @@ plugins {
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version + (System.getenv("CIRCLE_BUILD_NUM") != null ? ("-" + System.getenv("CIRCLE_BUILD_NUM")) : "")
+version = project.mod_version
 group = project.maven_group
 
 repositories {
@@ -49,7 +49,6 @@ dependencies {
     // Libraries
     library "meteordevelopment:orbit:${project.orbit_version}"
     library "meteordevelopment:starscript:${project.starscript_version}"
-    library "club.minnced:java-discord-rpc:${project.discordrpc_version}"
     library "org.reflections:reflections:${project.reflections_version}"
 }
 
@@ -66,7 +65,6 @@ processResources {
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version
-        filter { line -> line.replace("@devbuild@", System.getenv("CIRCLE_BUILD_NUM") != null ? System.getenv("CIRCLE_BUILD_NUM") : "") }
         filter { line -> line.replace("@mc_version@", project.minecraft_version) }
     }
 }
@@ -107,7 +105,7 @@ publishing {
     publications {
         java(MavenPublication) {
             artifactId = "meteor-client"
-            version = System.getenv("CIRCLE_BUILD_NUM") == null ? project.mod_version : "SNAPSHOT"
+            version = project.mod_version
 
             artifact(remapJar) {
                 builtBy remapJar
@@ -119,22 +117,6 @@ publishing {
 
             artifact(javadocJar) {
                 builtBy javadocJar
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            name = "meteor-maven"
-            url = System.getenv("CIRCLE_BUILD_NUM") == null ? "https://maven.meteordev.org" : "https://maven.meteordev.org/snapshots"
-
-            credentials {
-                username = System.getenv("MAVEN_METEOR_ALIAS")
-                password = System.getenv("MAVEN_METEOR_TOKEN")
-            }
-
-            authentication {
-                basic(BasicAuthentication)
             }
         }
     }
