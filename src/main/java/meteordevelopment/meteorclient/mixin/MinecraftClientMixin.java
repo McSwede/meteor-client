@@ -20,7 +20,6 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.render.UnfocusedCPU;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
-import meteordevelopment.meteorclient.utils.network.OnlinePlayers;
 import meteordevelopment.starscript.Script;
 import meteordevelopment.starscript.compiler.Compiler;
 import meteordevelopment.starscript.compiler.Parser;
@@ -83,7 +82,6 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
 
     @Inject(at = @At("HEAD"), method = "tick")
     private void onPreTick(CallbackInfo info) {
-        OnlinePlayers.update();
         doItemUseCalled = false;
 
         getProfiler().push("meteor-client_pre_update");
@@ -133,29 +131,6 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
         completableFuture.thenRun(() -> MeteorClient.EVENT_BUS.post(ResourcePacksReloadedEvent.get()));
 
         return completableFuture;
-    }
-
-    @ModifyArg(method = "updateWindowTitle", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/Window;setTitle(Ljava/lang/String;)V"))
-    private String setTitle(String original) {
-        if (Config.get() == null || !Config.get().customWindowTitle.get()) return original;
-
-        String customTitle = Config.get().customWindowTitleText.get();
-        Parser.Result result = Parser.parse(customTitle);
-
-        if (result.hasErrors()) {
-            for (Error error : result.errors) MeteorStarscript.printChatError(error);
-        }
-        else {
-            Script script = Compiler.compile(result);
-
-            try {
-                customTitle = MeteorStarscript.ss.run(script);
-            } catch (StarscriptError e) {
-                MeteorStarscript.printChatError(e);
-            }
-        }
-
-        return customTitle;
     }
 
     @Inject(method = "onResolutionChanged", at = @At("TAIL"))

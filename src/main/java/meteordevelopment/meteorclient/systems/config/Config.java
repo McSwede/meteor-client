@@ -55,38 +55,6 @@ public class Config extends System<Config> {
         .build()
     );
 
-    public final Setting<Boolean> titleScreenCredits = sgVisual.add(new BoolSetting.Builder()
-        .name("title-screen-credits")
-        .description("Show Meteor credits on title screen")
-        .defaultValue(true)
-        .build()
-    );
-
-    public final Setting<Boolean> titleScreenSplashes = sgVisual.add(new BoolSetting.Builder()
-        .name("title-screen-splashes")
-        .description("Show Meteor splash texts on title screen")
-        .defaultValue(true)
-        .build()
-    );
-
-    public final Setting<Boolean> customWindowTitle = sgVisual.add(new BoolSetting.Builder()
-        .name("custom-window-title")
-        .description("Show custom text in the window title.")
-        .defaultValue(false)
-        .onModuleActivated(setting -> mc.updateWindowTitle())
-        .onChanged(value -> mc.updateWindowTitle())
-        .build()
-    );
-
-    public final Setting<String> customWindowTitleText = sgVisual.add(new StringSetting.Builder()
-        .name("window-title-text")
-        .description("The text it displays in the window title.")
-        .visible(customWindowTitle::get)
-        .defaultValue("Minecraft {mc_version} - Meteor Client {version}")
-        .onChanged(value -> mc.updateWindowTitle())
-        .build()
-    );
-
     // Chat
 
     public final Setting<String> prefix = sgChat.add(new StringSetting.Builder()
