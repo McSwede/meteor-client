@@ -144,6 +144,26 @@ public class Utils {
         return Math.max(mc.options.viewDistance, ((ClientPlayNetworkHandlerAccessor) mc.getNetworkHandler()).getChunkLoadDistance());
     }
 
+    public static void addMeteorPvpToServerList() {
+        ServerList servers = new ServerList(mc);
+        servers.loadFile();
+
+        boolean contains = false;
+        for (int i = 0; i < servers.size(); i++) {
+            ServerInfo server = servers.get(i);
+
+            if (server.address.contains("pvp.meteorclient.com")) {
+                contains = true;
+                break;
+            }
+        }
+
+        if (!contains) {
+            servers.add(new ServerInfo("Meteor Pvp", "pvp.meteorclient.com", false));
+            servers.saveFile();
+        }
+    }
+
     public static int getWindowWidth() {
         return mc.getWindow().getFramebufferWidth();
     }

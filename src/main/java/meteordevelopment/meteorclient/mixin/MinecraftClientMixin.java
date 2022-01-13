@@ -20,6 +20,7 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.render.UnfocusedCPU;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.Placeholders;
+import meteordevelopment.meteorclient.utils.network.OnlinePlayers;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.Screen;
@@ -77,6 +78,7 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
 
     @Inject(at = @At("HEAD"), method = "tick")
     private void onPreTick(CallbackInfo info) {
+        OnlinePlayers.update();
         doItemUseCalled = false;
 
         getProfiler().push("meteor-client_pre_update");
@@ -126,6 +128,13 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
         completableFuture.thenRun(() -> MeteorClient.EVENT_BUS.post(ResourcePacksReloadedEvent.get()));
 
         return completableFuture;
+    }
+
+    @ModifyArg(method = "updateWindowTitle", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/Window;setTitle(Ljava/lang/String;)V"))
+    private String setTitle(String original) {
+        if (Config.get() == null || !Config.get().customWindowTitle) return original;
+
+        return Placeholders.apply(Config.get().customWindowTitleText);
     }
 
     @Inject(method = "onResolutionChanged", at = @At("TAIL"))

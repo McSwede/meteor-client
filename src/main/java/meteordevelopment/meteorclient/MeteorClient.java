@@ -16,12 +16,14 @@ import meteordevelopment.meteorclient.systems.Systems;
 import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.misc.DiscordPresence;
 import meteordevelopment.meteorclient.utils.Init;
 import meteordevelopment.meteorclient.utils.InitStage;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.Version;
 import meteordevelopment.meteorclient.utils.misc.input.KeyAction;
 import meteordevelopment.meteorclient.utils.misc.input.KeyBinds;
+import meteordevelopment.meteorclient.utils.network.OnlinePlayers;
 import meteordevelopment.orbit.EventBus;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.orbit.IEventBus;
@@ -75,6 +77,14 @@ public class MeteorClient implements ClientModInitializer {
         // Register event handlers
         EVENT_BUS.registerLambdaFactory("meteordevelopment.meteorclient", (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
 
+        // Pre-load
+        Systems.addPreLoadTask(() -> {
+            if (!Modules.get().getFile().exists()) {
+                Modules.get().get(DiscordPresence.class).toggle();
+                Utils.addMeteorPvpToServerList();
+            }
+        });
+
         // Pre init
         init(InitStage.Pre);
 
@@ -97,6 +107,7 @@ public class MeteorClient implements ClientModInitializer {
 
         // Shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            OnlinePlayers.leave();
             Systems.save();
             GuiThemes.save();
         }));
