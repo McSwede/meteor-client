@@ -38,7 +38,7 @@ import java.util.Random;
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public class ServerCommand extends Command {
-    private static final List<String> ANTICHEAT_LIST = Arrays.asList("nocheatplus","negativity","warden","horizon","illegalstack","coreprotect","exploitsx","spartan","matrix","hawk","reflex","antiaura","alice","aac","aac5","soaromasac","vulcan","wraith","godseye","anticheatreloaded","ness","flappyanticheat","themis","intave","verus","artemis","sparky");
+    private static final List<String> ANTICHEAT_LIST = Arrays.asList("nocheatplus","negativity","warden","horizon","illegalstack","coreprotect","exploitsx","spartan","matrix","hawk","reflex","antiaura","alice","aac","aac5","soaromasac","vulcan","wraith","godseye","anticheatreloaded","ness","flappyanticheat","themis","intave","verus","artemis","sparky", "abc", "kauri", "witherac");
     private static final String completionStarts = "/:abcdefghijklmnopqrstuvwxyz0123456789-";
     private int ticks = 0;
     private List<String> plugins = new ArrayList<>();
