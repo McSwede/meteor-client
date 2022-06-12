@@ -7,6 +7,7 @@ package meteordevelopment.meteorclient.systems.modules;
 
 import com.google.common.collect.Ordering;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
@@ -44,6 +45,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryEntryList;
@@ -533,7 +535,6 @@ public class Modules extends System<Modules> {
 
     private void initMisc() {
         add(new Swarm());
-        add(new Announcer());
         add(new AntiPacketKick());
         add(new AutoClicker());
         add(new AutoLog());
@@ -643,6 +644,11 @@ public class Modules extends System<Modules> {
         }
 
         @Override
+        public Set<RegistryKey<Module>> getKeys() {
+            return null;
+        }
+
+        @Override
         public Optional<RegistryEntry<Module>> getRandom(Random random) {
             return Optional.empty();
         }
@@ -654,6 +660,11 @@ public class Modules extends System<Modules> {
 
         @Override
         public RegistryEntry<Module> getOrCreateEntry(RegistryKey<Module> key) {
+            return null;
+        }
+
+        @Override
+        public DataResult<RegistryEntry<Module>> getOrCreateEntryDataResult(RegistryKey<Module> key) {
             return null;
         }
 
