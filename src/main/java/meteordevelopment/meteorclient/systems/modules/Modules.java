@@ -33,7 +33,6 @@ import meteordevelopment.meteorclient.systems.modules.render.marker.Marker;
 import meteordevelopment.meteorclient.systems.modules.render.search.Search;
 import meteordevelopment.meteorclient.systems.modules.world.Timer;
 import meteordevelopment.meteorclient.systems.modules.world.*;
-import meteordevelopment.meteorclient.systems.modules.crash.*;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.ValueComparableMap;
 import meteordevelopment.meteorclient.utils.misc.input.Input;
@@ -88,7 +87,6 @@ public class Modules extends System<Modules> {
         initRender();
         initWorld();
         initMisc();
-        initCrash();
     }
 
     @Override
@@ -553,19 +551,6 @@ public class Modules extends System<Modules> {
         add(new Spam());
         add(new ServerSpoof());
         add(new InventoryTweaks());
-    }
-
-    private void initCrash() {
-        add(new AACCrash());
-        add(new BoatCrash());
-        add(new BookCrash());
-        add(new ContainerCrash());
-        add(new EntityCrash());
-        add(new InvalidPositionCrash());
-        add(new LoginCrash());
-        add(new MovementCrash());
-        add(new SignCrash());
-        add(new TryUseCrash());
     }
 
     public static class ModuleRegistry extends Registry<Module> {
