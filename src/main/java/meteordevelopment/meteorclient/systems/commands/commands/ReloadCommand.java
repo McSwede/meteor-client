@@ -6,6 +6,7 @@
 package meteordevelopment.meteorclient.systems.commands.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import meteordevelopment.meteorclient.renderer.Fonts;
 import meteordevelopment.meteorclient.systems.Systems;
 import meteordevelopment.meteorclient.systems.commands.Command;
 import net.minecraft.command.CommandSource;
@@ -14,13 +15,14 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public class ReloadCommand extends Command {
     public ReloadCommand() {
-        super("reload", "Reloads the config, modules, friends, macros, accounts and capes.");
+        super("reload", "Reloads the config, modules, friends, macros, accounts, capes and fonts.");
     }
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.executes(context -> {
             Systems.load();
+            Fonts.refresh();
 
             return SINGLE_SUCCESS;
         });
