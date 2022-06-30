@@ -18,6 +18,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ResourcePackSendS2CPacket;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
@@ -77,10 +78,34 @@ public class ServerSpoof extends Module {
             else if (StringUtils.containsIgnoreCase(packet.getData().toString(StandardCharsets.UTF_8), "fabric") && brand.get().equalsIgnoreCase("fabric")) {
                 event.cancel();
             }
+            else if (id.toString().equals("fabric:registry/sync")) {
+				event.cancel();
+			}
+            else if (id.toString().equals("minecraft:register")) {
+				event.cancel();
+			}
         }
 
         @EventHandler
+		private void onPacketSent(PacketEvent.Sent event) {
+			if (event.packet instanceof CustomPayloadS2CPacket payload) {
+				if (payload.getChannel().toString().equals("fabric:registry/sync")) {
+					event.setCancelled(true);
+				}
+				else if (payload.getChannel().toString().equals("minecraft:register")) {
+					event.cancel();
+				}
+			}
+		}
+
+        @EventHandler
         private void onPacketRecieve(PacketEvent.Receive event) {
+            if (event.packet instanceof CustomPayloadS2CPacket payload) {
+				if (payload.getChannel().toString().equals("fabric:registry/sync")) {
+					event.cancel();
+				}
+			}
+
             if (!isActive() || !resourcePack.get()) return;
             if (!(event.packet instanceof ResourcePackSendS2CPacket packet)) return;
             event.cancel();
