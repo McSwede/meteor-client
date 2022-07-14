@@ -58,7 +58,7 @@ public class NoFall extends Module {
         .name("anchor")
         .description("Centers the player and reduces movement when using bucket or air place mode.")
         .defaultValue(true)
-        .visible(() -> mode.get() != Mode.Packet)
+        .visible(() -> mode.get() == Mode.AirPlace || mode.get() == Mode.Bucket)
         .build()
     );
 
@@ -145,6 +145,14 @@ public class NoFall extends Module {
                 useBucket(InvUtils.findInHotbar(Items.BUCKET), false);
             }
         }
+
+        // BreakFall mode
+        if (mode.get() == Mode.BreakFall) {
+            if (mc.player.fallDistance > 3 && !EntityUtils.isAboveWater(mc.player)) {
+                mc.player.setVelocity(0, 0.1, 0);
+                mc.player.fallDistance = 0;
+            }
+        }
     }
 
     private void useBucket(FindItemResult bucket, boolean placedWater) {
@@ -172,7 +180,8 @@ public class NoFall extends Module {
     public enum Mode {
         Packet,
         AirPlace,
-        Bucket
+        Bucket,
+        BreakFall
     }
 
     public enum PlaceMode {
