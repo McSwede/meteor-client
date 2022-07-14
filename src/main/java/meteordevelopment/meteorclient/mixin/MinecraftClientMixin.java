@@ -5,6 +5,8 @@
 
 package meteordevelopment.meteorclient.mixin;
 
+import com.mojang.authlib.minecraft.UserApiService;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.entity.player.ItemUseCrosshairTargetEvent;
 import meteordevelopment.meteorclient.events.game.GameLeftEvent;
@@ -20,12 +22,9 @@ import meteordevelopment.meteorclient.systems.modules.render.UnfocusedCPU;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.starscript.Script;
-import meteordevelopment.starscript.compiler.Compiler;
-import meteordevelopment.starscript.compiler.Parser;
-import meteordevelopment.starscript.utils.Error;
-import meteordevelopment.starscript.utils.StarscriptError;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
+import net.minecraft.client.RunArgs;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.util.Window;
@@ -62,6 +61,12 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
     @Shadow
     @Nullable
     public ClientPlayerInteractionManager interactionManager;
+
+    @Shadow
+    protected abstract UserApiService createUserApiService(YggdrasilAuthenticationService authService, RunArgs runArgs);
+
+    @Shadow
+    public abstract void scheduleStop();
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onInit(CallbackInfo info) {
