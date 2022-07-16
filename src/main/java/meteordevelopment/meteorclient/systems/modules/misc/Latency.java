@@ -2,7 +2,7 @@ package meteordevelopment.meteorclient.systems.modules.misc;
 
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
-import meteordevelopment.meteorclient.settings.DoubleSetting;
+import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.EnumSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
@@ -22,18 +22,17 @@ public class Latency extends Module {
 
     private final Setting<Mode> mode = sgGeneral.add(new EnumSetting.Builder<Mode>()
         .name("mode")
-        .description("Delay will delay all packets and increase latency while spoof will just spoof it.")
+        .description("Modify will modify your actual latency. Spoof will just spoof it.")
         .defaultValue(Mode.Spoof)
         .build()
     );
 
-    public final Setting<Double> delay = sgGeneral.add(new DoubleSetting.Builder()
+    public final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
             .name("delay")
             .description("Amount of latency to add in milliseconds")
             .defaultValue(50)
             .min(0)
             .max(3000)
-            .decimalPlaces(0)
             .sliderRange(0, 1000)
             .build()
     );
@@ -57,10 +56,10 @@ public class Latency extends Module {
     }
 
     private boolean shouldDelayPacket(Packet<?> p) {
-        if (mode.get() == Mode.Delay) {
-            return true; // delay all packets
+        if (mode.get() == Mode.Modify) {
+            return true; // Delay all packets
         } else {
-            return p instanceof PlayPongC2SPacket || p instanceof KeepAliveC2SPacket; // only delay pong or keepalive packets
+            return p instanceof PlayPongC2SPacket || p instanceof KeepAliveC2SPacket; // Only delay pong or keepalive packets
         }
     }
 
@@ -72,7 +71,7 @@ public class Latency extends Module {
 
     @Override
     public String getInfoString() {
-        return delay.get().toString()+ " ms";
+        return delay.get().toString()+ "ms";
     }
 
     @EventHandler
@@ -92,7 +91,7 @@ public class Latency extends Module {
     }
 
     public enum Mode {
-        Delay,
+        Modify,
         Spoof
     }
 
