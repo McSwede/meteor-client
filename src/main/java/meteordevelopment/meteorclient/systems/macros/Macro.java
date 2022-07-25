@@ -1,6 +1,6 @@
 /*
- * This file is part of the Meteor Client distribution (https://github.com/MeteorDevelopment/meteor-client/).
- * Copyright (c) 2021 Meteor Development.
+ * This file is part of the Meteor Client distribution (https://github.com/MeteorDevelopment/meteor-client).
+ * Copyright (c) Meteor Development.
  */
 
 package meteordevelopment.meteorclient.systems.macros;
@@ -28,6 +28,11 @@ public class Macro implements ISerializable<Macro> {
 
     private final List<Script> scripts = new ArrayList<>(1);
     private boolean dirty;
+
+    public Macro() {}
+    public Macro(NbtElement tag) {
+        fromTag((NbtCompound) tag);
+    }
 
     public void addMessage(String message) {
         messages.add(message);
