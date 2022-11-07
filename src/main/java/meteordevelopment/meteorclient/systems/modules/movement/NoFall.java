@@ -70,7 +70,7 @@ public class NoFall extends Module {
         .name("anchor")
         .description("Centers the player and reduces movement when using bucket or air place mode.")
         .defaultValue(true)
-        .visible(() -> mode.get() == Mode.AirPlace || mode.get() == Mode.Bucket)
+        .visible(() -> mode.get() == Mode.AirPlace || mode.get() == Mode.Place)
         .build()
     );
 
@@ -220,7 +220,7 @@ public class NoFall extends Module {
     public enum Mode {
         Packet,
         AirPlace,
-        Place
+        Place,
         BreakFall
     }
 
