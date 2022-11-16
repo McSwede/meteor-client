@@ -10,11 +10,9 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.render.CameraTweaks;
 import meteordevelopment.meteorclient.systems.modules.render.FreeLook;
 import meteordevelopment.meteorclient.systems.modules.render.Freecam;
-import meteordevelopment.meteorclient.systems.modules.render.NoRender;
 import meteordevelopment.meteorclient.systems.modules.world.HighwayBuilder;
 import meteordevelopment.meteorclient.utils.Utils;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.CameraSubmersionType;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.BlockView;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,13 +36,7 @@ public abstract class CameraMixin implements ICamera {
 
     @Shadow protected abstract void setRotation(float yaw, float pitch);
 
-    @Unique
-    private float tickDelta;
-
-    @Inject(method = "getSubmersionType", at = @At("HEAD"), cancellable = true)
-    private void getSubmergedFluidState(CallbackInfoReturnable<CameraSubmersionType> ci) {
-        if (Modules.get().get(NoRender.class).noLiquidOverlay()) ci.setReturnValue(CameraSubmersionType.NONE);
-    }
+    @Unique private float tickDelta;
 
     @ModifyArgs(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;moveBy(DDD)V", ordinal = 0))
     private void modifyCameraDistance(Args args) {
