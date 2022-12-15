@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.screens.settings.*;
+import meteordevelopment.meteorclient.gui.themes.meteor.widgets.WMeteorLabel;
 import meteordevelopment.meteorclient.gui.utils.Cell;
 import meteordevelopment.meteorclient.gui.utils.CharFilter;
 import meteordevelopment.meteorclient.gui.utils.SettingsWidgetFactory;
@@ -27,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -424,8 +426,18 @@ public class DefaultSettingsWidgetFactory implements SettingsWidgetFactory {
     // Other
 
     private void selectW(WContainer c, Setting<?> setting, Runnable action) {
-        WButton button = c.add(theme.button("Select")).expandCellX().widget();
+        boolean addCount = WSelectedCountLabel.getSize(setting) != -1;
+
+        WContainer c2 = c;
+        if (addCount) {
+            c2 = c.add(theme.horizontalList()).expandCellX().widget();
+            ((WHorizontalList) c2).spacing *= 2;
+        }
+
+        WButton button = c2.add(theme.button("Select")).expandCellX().widget();
         button.action = action;
+
+        if (addCount) c2.add(new WSelectedCountLabel(setting).color(theme.textSecondaryColor()));
 
         reset(c, setting, null);
     }
@@ -436,5 +448,35 @@ public class DefaultSettingsWidgetFactory implements SettingsWidgetFactory {
             setting.reset();
             if (action != null) action.run();
         };
+    }
+
+    private static class WSelectedCountLabel extends WMeteorLabel {
+        private final Setting<?> setting;
+        private int lastSize = -1;
+
+        public WSelectedCountLabel(Setting<?> setting) {
+            super("", false);
+
+            this.setting = setting;
+        }
+
+        @Override
+        protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+            int size = getSize(setting);
+
+            if (size != lastSize) {
+                set("(" + size + " selected)");
+                lastSize = size;
+            }
+
+            super.onRender(renderer, mouseX, mouseY, delta);
+        }
+
+        public static int getSize(Setting<?> setting) {
+            if (setting.get() instanceof Collection<?> collection) return collection.size();
+            if (setting.get() instanceof Map<?, ?> map) return map.size();
+
+            return -1;
+        }
     }
 }
