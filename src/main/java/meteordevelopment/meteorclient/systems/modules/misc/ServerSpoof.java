@@ -92,25 +92,7 @@ public class ServerSpoof extends Module {
                     }
                 }
             }
-            else if (id.toString().equals("fabric:registry/sync")) {
-				event.cancel();
-			}
-            else if (id.toString().equals("minecraft:register")) {
-				event.cancel();
-			}
         }
-
-        @EventHandler
-		private void onPacketSent(PacketEvent.Sent event) {
-			if (event.packet instanceof CustomPayloadS2CPacket payload) {
-				if (payload.getChannel().toString().equals("fabric:registry/sync")) {
-					event.setCancelled(true);
-				}
-				else if (payload.getChannel().toString().equals("minecraft:register")) {
-					event.cancel();
-				}
-			}
-		}
 
         @EventHandler
         private void onPacketRecieve(PacketEvent.Receive event) {
