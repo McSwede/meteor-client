@@ -9,10 +9,9 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.KeepAliveC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayPongC2SPacket;
+import net.minecraft.network.packet.c2s.common.KeepAliveC2SPacket;
+import net.minecraft.network.packet.c2s.common.CommonPongC2SPacket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +58,7 @@ public class Latency extends Module {
         if (mode.get() == Mode.Modify) {
             return true; // Delay all packets
         } else {
-            return p instanceof PlayPongC2SPacket || p instanceof KeepAliveC2SPacket; // Only delay pong or keepalive packets
+            return p instanceof CommonPongC2SPacket || p instanceof KeepAliveC2SPacket; // Only delay pong or keepalive packets
         }
     }
 
