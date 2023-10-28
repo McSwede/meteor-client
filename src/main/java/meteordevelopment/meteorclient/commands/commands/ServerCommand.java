@@ -36,7 +36,7 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class ServerCommand extends Command {
-    private static final List<String> ANTICHEAT_LIST = Arrays.asList("nocheatplus","negativity","warden","horizon","illegalstack","coreprotect","exploitsx","spartan","matrix","hawk","reflex","antiaura","alice","aac","aac5","soaromasac","vulcan","wraith","godseye","anticheatreloaded","ness","flappyanticheat","themis","intave","verus","artemis","sparky","abc","kauri","witherac","antixrayheuristics");
+    private static final List<String> ANTICHEAT_LIST = Arrays.asList("nocheatplus","negativity","warden","horizon","illegalstack","coreprotect","exploitsx","spartan","matrix","hawk","reflex","antiaura","alice","aac","aac5","soaromasac","vulcan","wraith","godseye","anticheatreloaded","ness","flappyanticheat","themis","intave","verus","artemis","sparky","abc","kauri","witherac","antixrayheuristics", "grimac");
     private static final String completionStarts = "/:abcdefghijklmnopqrstuvwxyz0123456789-";
     private int ticks = 0;
     private boolean bukkitMode = false;
