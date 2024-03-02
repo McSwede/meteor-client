@@ -66,6 +66,13 @@ public class Tracers extends Module {
         .build()
     );
 
+    private final Setting<Boolean> ignoreBots = sgGeneral.add(new BoolSetting.Builder()
+        .name("ignore-bots")
+        .description("Only render non-bot nametags.")
+        .defaultValue(true)
+        .build()
+    );
+
     public final Setting<Boolean> showInvis = sgGeneral.add(new BoolSetting.Builder()
         .name("show-invisible")
         .description("Shows invisible entities.")
@@ -218,7 +225,7 @@ public class Tracers extends Module {
     }
 
     private boolean shouldBeIgnored(Entity entity) {
-        return !PlayerUtils.isWithin(entity, maxDist.get()) || (!Modules.get().isActive(Freecam.class) && entity == mc.player) || !entities.get().contains(entity.getType()) || (ignoreSelf.get() && entity == mc.player) || (ignoreFriends.get() && entity instanceof PlayerEntity && Friends.get().isFriend((PlayerEntity) entity)) || (!showInvis.get() && entity.isInvisible()) | !EntityUtils.isInRenderDistance(entity);
+        return !PlayerUtils.isWithin(entity, maxDist.get()) || (!Modules.get().isActive(Freecam.class) && entity == mc.player) || !entities.get().contains(entity.getType()) || (ignoreSelf.get() && entity == mc.player) || (ignoreFriends.get() && entity instanceof PlayerEntity && Friends.get().isFriend((PlayerEntity) entity)) || (EntityUtils.getGameMode((PlayerEntity) entity) == null && ignoreBots.get()) || (!showInvis.get() && entity.isInvisible()) | !EntityUtils.isInRenderDistance(entity);
     }
 
     private Color getEntityColor(Entity entity) {
