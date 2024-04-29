@@ -7,6 +7,7 @@ package meteordevelopment.meteorclient.systems.modules.misc;
 
 import io.netty.buffer.Unpooled;
 import meteordevelopment.meteorclient.MeteorClient;
+import meteordevelopment.meteorclient.events.game.ClientBrandRetrieverEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Categories;
@@ -73,6 +74,12 @@ public class ServerSpoof extends Module {
     }
 
     private class Listener {
+
+        @EventHandler
+        private void onClientBrandRetrive(ClientBrandRetrieverEvent event) {
+            if (spoofBrand.get()) event.info.setReturnValue(brand.get());
+        }
+
         @EventHandler
         private void onPacketSend(PacketEvent.Send event) {
             if (!isActive()) return;

@@ -49,6 +49,7 @@
     "ChunkBorderDebugRendererMixin",
     "ChunkOcclusionDataBuilderMixin",
     "ChunkSkyLightProviderMixin",
+    "ClientBrandRetrieverMixin",
     "ClientChunkManagerAccessor",
     "ClientChunkMapAccessor",
     "ClientConnectionAccessor",
