@@ -75,7 +75,6 @@
     "DisconnectedScreenMixin",
     "DrawContextMixin",
     "DyedColorComponentMixin",
-    "ElytraFeatureRendererMixin",
     "EnchantingTableBlockEntityRendererMixin",
     "EndCrystalEntityRendererMixin",
     "EntityAccessor",
