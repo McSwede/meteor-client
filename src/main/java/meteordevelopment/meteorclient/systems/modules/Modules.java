@@ -5,7 +5,6 @@
 
 package meteordevelopment.meteorclient.systems.modules;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import meteordevelopment.meteorclient.MeteorClient;
@@ -21,6 +20,7 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.System;
 import meteordevelopment.meteorclient.systems.Systems;
+import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.systems.modules.combat.*;
 import meteordevelopment.meteorclient.systems.modules.misc.*;
 import meteordevelopment.meteorclient.systems.modules.misc.swarm.Swarm;
@@ -47,8 +47,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.NotNull;
@@ -121,6 +119,7 @@ public class Modules extends System<Modules> {
         return CATEGORIES;
     }
 
+    @Deprecated(forRemoval = true)
     public static Category getCategoryByHash(int hash) {
         for (Category category : CATEGORIES) {
             if (category.hashCode() == hash) return category;
@@ -174,6 +173,12 @@ public class Modules extends System<Modules> {
 
         for (Module module : this.moduleInstances.values()) {
             int score = Utils.searchLevenshteinDefault(module.title, text, false);
+            if (Config.get().moduleAliases.get()) {
+                for (String alias : module.aliases) {
+                    int aliasScore = Utils.searchLevenshteinDefault(alias, text, false);
+                    if (aliasScore < score) score = aliasScore;
+                }
+            }
             modules.put(module, modules.getOrDefault(module, 0) + score);
         }
 
@@ -524,7 +529,6 @@ public class Modules extends System<Modules> {
         add(new Tracers());
         add(new Trail());
         add(new Trajectories());
-        add(new UnfocusedCPU());
         add(new VoidESP());
         add(new WallHack());
         add(new WaypointsModule());
@@ -685,40 +689,9 @@ public class Modules extends System<Modules> {
         }
 
         @Override
-        public Optional<RegistryEntry.Reference<Module>> getEntry(RegistryKey<Module> key) {
-            return Optional.empty();
-        }
-
-        @Override
         public Stream<RegistryEntry.Reference<Module>> streamEntries() {
             return null;
         }
-
-        @Override
-        public Optional<RegistryEntryList.Named<Module>> getEntryList(TagKey<Module> tag) {
-            return Optional.empty();
-        }
-
-        @Override
-        public RegistryEntryList.Named<Module> getOrCreateEntryList(TagKey<Module> tag) {
-            return null;
-        }
-
-        @Override
-        public Stream<Pair<TagKey<Module>, RegistryEntryList.Named<Module>>> streamTagsAndEntries() {
-            return null;
-        }
-
-        @Override
-        public Stream<TagKey<Module>> streamTags() {
-            return null;
-        }
-
-        @Override
-        public void clearTags() {}
-
-        @Override
-        public void populateTags(Map<TagKey<Module>, List<RegistryEntry<Module>>> tagEntries) {}
 
         private static class ModuleIterator implements Iterator<Module> {
             private final Iterator<Module> iterator = Modules.get().getAll().iterator();

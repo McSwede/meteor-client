@@ -87,7 +87,7 @@ public class MeteorStarscript {
         // Meteor
         ss.set("meteor", new ValueMap()
             .set("name", MeteorClient.NAME)
-            .set("version", MeteorClient.VERSION != null ? (MeteorClient.DEV_BUILD.isEmpty() ? MeteorClient.VERSION.toString() : MeteorClient.VERSION + " " + MeteorClient.DEV_BUILD) : "")
+            .set("version", MeteorClient.VERSION != null ? (MeteorClient.BUILD_NUMBER.isEmpty() ? MeteorClient.VERSION.toString() : MeteorClient.VERSION + " " + MeteorClient.BUILD_NUMBER) : "")
             .set("modules", () -> Value.number(Modules.get().getAll().size()))
             .set("active_modules", () -> Value.number(Modules.get().getActive().size()))
             .set("is_module_active", MeteorStarscript::isModuleActive)
@@ -509,10 +509,13 @@ public class MeteorStarscript {
         if (mc.player == null || mc.world == null) return Value.string("");
 
         BP.set(mc.player.getX(), mc.player.getY(), mc.player.getZ());
-        Identifier id = mc.world.getRegistryManager().get(RegistryKeys.BIOME).getId(mc.world.getBiome(BP).value());
-        if (id == null) return Value.string("Unknown");
-
-        return Value.string(Arrays.stream(id.getPath().split("_")).map(StringUtils::capitalize).collect(Collectors.joining(" ")));
+        return mc.world.getRegistryManager().getOptional(RegistryKeys.BIOME)
+            .map(biomeRegistry -> {
+                Identifier id = biomeRegistry.getId(mc.world.getBiome(BP).value());
+                if (id == null) return Value.string("Unknown");
+                return Value.string(Arrays.stream(id.getPath().split("_")).map(StringUtils::capitalize).collect(Collectors.joining(" ")));
+            })
+            .orElse(Value.string("Unknown"));
     }
 
     private static Value handOrOffhand() {
