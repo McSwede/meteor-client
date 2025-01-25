@@ -91,7 +91,6 @@ dependencies {
     // Libraries
     library("meteordevelopment:orbit:${properties["orbit_version"] as String}")
     library("meteordevelopment:starscript:${properties["starscript_version"] as String}")
-    library("meteordevelopment:discord-ipc:${properties["discordipc_version"] as String}")
     library("org.reflections:reflections:${properties["reflections_version"] as String}")
     library("io.netty:netty-handler-proxy:${properties["netty_version"] as String}") { isTransitive  = false }
     library("io.netty:netty-codec-socks:${properties["netty_version"] as String}") { isTransitive  = false }
@@ -112,30 +111,7 @@ afterEvaluate {
 }
 
 tasks {
-    processResources {
-        val buildNumber = project.findProperty("build_number")?.toString() ?: ""
-        val commit = project.findProperty("commit")?.toString() ?: ""
-
-        val propertyMap = mapOf(
-            "version"           to project.version,
-            "build_number"      to buildNumber,
-            "commit"            to commit,
-            "minecraft_version" to project.property("minecraft_version"),
-            "loader_version"    to project.property("loader_version")
-        )
-
-        inputs.properties(propertyMap)
-        filesMatching("fabric.mod.json") {
-            expand(propertyMap)
-        }
-    }
-
     jar {
-        val licenseSuffix = project.base.archivesName.get()
-        from("LICENSE") {
-            rename { "${it}_${licenseSuffix}" }
-        }
-
         manifest {
             attributes["Main-Class"] = "meteordevelopment.meteorclient.Main"
         }
@@ -157,11 +133,6 @@ tasks {
 
     shadowJar {
         configurations = listOf(project.configurations.shadow.get())
-
-        val licenseSuffix = project.base.archivesName.get()
-        from("LICENSE") {
-            rename { "${it}_${licenseSuffix}" }
-        }
 
         dependencies {
             exclude {
@@ -186,32 +157,6 @@ tasks {
     build {
         if (System.getenv("CI")?.toBoolean() == true) {
             dependsOn("javadocJar")
-        }
-    }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-            artifactId = "meteor-client"
-
-            version = properties["minecraft_version"] as String + "-SNAPSHOT"
-        }
-    }
-
-    repositories {
-        maven("https://maven.meteordev.org/snapshots") {
-            name = "meteor-maven"
-
-            credentials {
-                username = System.getenv("MAVEN_METEOR_ALIAS")
-                password = System.getenv("MAVEN_METEOR_TOKEN")
-            }
-
-            authentication {
-                create<BasicAuthentication>("basic")
-            }
         }
     }
 }
