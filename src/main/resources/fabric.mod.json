@@ -21,6 +21,9 @@
   "entrypoints": {
     "client": [
       "meteordevelopment.meteorclient.MeteorClient"
+    ],
+    "modmenu": [
+      "meteordevelopment.meteorclient.ModMenuIntegration"
     ]
   },
   "mixins": [
@@ -51,8 +54,7 @@
     "optifabric": "*",
     "feather": "*",
     "origins": "*",
-    "wurst": "*",
-    "sodium": "<0.6.5",
+    "sodium": "<0.6.12",
     "morechathistory": "*"
   }
 }
