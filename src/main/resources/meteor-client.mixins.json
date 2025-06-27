@@ -72,7 +72,6 @@
     "DefaultSkinHelperMixin",
     "DisconnectedScreenMixin",
     "DrawContextMixin",
-    "ElytraFeatureRendererMixin",
     "EnchantingTableBlockEntityRendererMixin",
     "EndCrystalEntityModelMixin",
     "EndCrystalEntityRendererMixin",
