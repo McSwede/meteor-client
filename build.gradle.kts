@@ -120,15 +120,15 @@ afterEvaluate {
 
         if (excluded.any { requested.contains(it) }) return@forEach
 
-        val compileOnlyDep = dependencies.create(requested) {
-            isTransitive = false
-        }
+            val compileOnlyDep = dependencies.create(requested) {
+                isTransitive = false
+            }
 
-        val implDep = dependencies.create(compileOnlyDep)
+            val implDep = dependencies.create(compileOnlyDep)
 
-        dependencies.add("compileOnlyApi", compileOnlyDep)
-        dependencies.add("implementation", implDep)
-        dependencies.add("include", compileOnlyDep)
+            dependencies.add("compileOnlyApi", compileOnlyDep)
+            dependencies.add("implementation", implDep)
+            dependencies.add("include", compileOnlyDep)
     }
 }
 
@@ -152,7 +152,7 @@ tasks {
             "build_number" to buildNumber,
             "commit" to commit,
             "minecraft_version" to project.property("minecraft_version"),
-            "loader_version" to project.property("loader_version")
+                                "loader_version" to project.property("loader_version")
         )
 
         inputs.properties(propertyMap)
@@ -162,6 +162,12 @@ tasks {
     }
 
     jar {
+        inputs.property("archivesName", project.base.archivesName.get())
+
+        // Launch sub project
+        dependsOn(":launch:compileJava")
+        from(project(":launch").layout.buildDirectory.dir("classes/java/main"))
+
         manifest {
             attributes["Main-Class"] = "meteordevelopment.meteorclient.Main"
         }
@@ -181,21 +187,6 @@ tasks {
         options.release = 21
         options.compilerArgs.add("-Xlint:deprecation")
         options.compilerArgs.add("-Xlint:unchecked")
-    }
-
-    shadowJar {
-        configurations = listOf(project.configurations.shadow.get())
-
-        dependencies {
-            exclude {
-                it.moduleGroup == "org.slf4j"
-            }
-        }
-    }
-
-    remapJar {
-        dependsOn(shadowJar)
-        inputFile.set(shadowJar.get().archiveFile)
     }
 
     javadoc {
