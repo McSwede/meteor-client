@@ -7,13 +7,8 @@ base {
     archivesName = properties["archives_base_name"] as String
     group = properties["maven_group"] as String
 
-    val suffix = if (project.hasProperty("build_number")) {
-        project.findProperty("build_number")
-    } else {
-        "local"
-    }
-
-    version = libs.versions.minecraft.get() + "-" + suffix
+    val suffix = providers.gradleProperty("build_number").getOrElse("local")
+    version = "${libs.versions.minecraft.get()}-$suffix"
 }
 
 repositories {
@@ -77,7 +72,6 @@ dependencies {
 
     val fapiVersion = libs.versions.fabric.api.get()
     modInclude(fabricApi.module("fabric-api-base", fapiVersion))
-    modInclude(fabricApi.module("fabric-resource-loader-v0", fapiVersion))
     modInclude(fabricApi.module("fabric-resource-loader-v1", fapiVersion))
 
     // Compat fixes
@@ -100,6 +94,24 @@ dependencies {
     jij(libs.waybackauthlib)
 }
 
+sourceSets {
+    val launcher by creating {
+        java {
+            srcDir("src/launcher/java")
+        }
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+
+    if (System.getenv("CI")?.toBoolean() == true) {
+        withSourcesJar()
+        withJavadocJar()
+    }
+}
+
 // Handle transitive dependencies for jar-in-jar
 // Based on implementation from BaseProject by FlorianMichael/EnZaXD
 // Source: https://github.com/FlorianMichael/BaseProject/blob/main/src/main/kotlin/de/florianmichael/baseproject/Fabric.kt
@@ -112,7 +124,6 @@ afterEvaluate {
         "org.slf4j",    // Logging provided by Minecraft
         "jsr305"        // Compile time annotations only
     )
-
 
     jijConfig.incoming.resolutionResult.allDependencies.forEach { dep ->
         val requested = dep.requested.displayName
@@ -135,16 +146,10 @@ loom {
     accessWidenerPath = file("src/main/resources/meteor-client.accesswidener")
 }
 
-afterEvaluate {
-    tasks.migrateMappings.configure {
-        outputDir.set(project.file("src/main/java"))
-    }
-}
-
 tasks {
     processResources {
-        val buildNumber = project.findProperty("build_number")?.toString() ?: ""
-        val commit = project.findProperty("commit")?.toString() ?: ""
+        val buildNumber = providers.gradleProperty("build_number").getOrElse("")
+        val commit = providers.gradleProperty("commit").getOrElse("")
 
         val propertyMap = mapOf(
             "version" to project.version,
@@ -160,32 +165,31 @@ tasks {
         }
     }
 
+    // Compile launcher with Java 8 for backwards compatibility
+    named<JavaCompile>("compileLauncherJava").configure {
+        sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+        targetCompatibility = JavaVersion.VERSION_1_8.toString()
+        options.compilerArgs.add("-Xlint:-options")
+    }
+
     jar {
         inputs.property("archivesName", project.base.archivesName.get())
 
-        // Launch sub project
-        dependsOn(":launch:compileJava")
-        from(project(":launch").layout.buildDirectory.dir("classes/java/main"))
+        // Include launcher classes
+        from(sourceSets["launcher"].output)
 
         manifest {
             attributes["Main-Class"] = "meteordevelopment.meteorclient.Main"
         }
     }
 
-    java {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-
-        if (System.getenv("CI")?.toBoolean() == true) {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
-
-    withType<JavaCompile> {
-        options.release = 21
-        options.compilerArgs.add("-Xlint:deprecation")
-        options.compilerArgs.add("-Xlint:unchecked")
+    withType<JavaCompile>().configureEach {
+        options.compilerArgs.addAll(
+            listOf(
+                "-Xlint:deprecation",
+                "-Xlint:unchecked"
+            )
+        )
     }
 
     javadoc {
