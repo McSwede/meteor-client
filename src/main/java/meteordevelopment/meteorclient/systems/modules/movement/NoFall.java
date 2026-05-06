@@ -202,7 +202,7 @@ public class NoFall extends Module {
         // BreakFall mode
         if (mode.get() == Mode.BreakFall) {
             if (mc.player.fallDistance > 3 && !EntityUtils.isAboveWater(mc.player)) {
-                mc.player.setVelocity(0, 0.1, 0);
+                mc.player.setDeltaMovement(0, 0.1, 0);
                 mc.player.fallDistance = 0;
             }
         }

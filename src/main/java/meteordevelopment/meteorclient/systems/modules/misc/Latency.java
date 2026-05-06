@@ -9,9 +9,9 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.common.KeepAliveC2SPacket;
-import net.minecraft.network.packet.c2s.common.CommonPongC2SPacket;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket;
+import net.minecraft.network.protocol.common.ServerboundPongPacket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,19 +46,20 @@ public class Latency extends Module {
     @EventHandler
     private void onSendPacket(PacketEvent.Send event) {
         if (!isActive()) return;
+
         if (!dontRepeat.contains(event.packet) && shouldDelayPacket(event.packet)) {
-                event.setCancelled(true);
-                entries.add(new PacketEntry(event.packet, delay.get(), System.currentTimeMillis()));
-            } else {
-                dontRepeat.remove(event.packet);
-            }
+            event.setCancelled(true);
+            entries.add(new PacketEntry(event.packet, delay.get(), System.currentTimeMillis()));
+        } else {
+            dontRepeat.remove(event.packet);
+        }
     }
 
     private boolean shouldDelayPacket(Packet<?> p) {
         if (mode.get() == Mode.Modify) {
             return true; // Delay all packets
         } else {
-            return p instanceof CommonPongC2SPacket || p instanceof KeepAliveC2SPacket; // Only delay pong or keepalive packets
+            return p instanceof ServerboundPongPacket || p instanceof ServerboundKeepAlivePacket; // Only delay pong or keepalive packets
         }
     }
 
@@ -70,12 +71,12 @@ public class Latency extends Module {
 
     @Override
     public String getInfoString() {
-        return delay.get().toString()+ "ms";
+        return delay.get().toString() + "ms";
     }
 
     @EventHandler
     private void onPreTick(TickEvent.Pre event) {
-        if (mc.getNetworkHandler() == null) {
+        if (mc.getConnection() == null) {
             toggle();
             return;
         }
@@ -84,7 +85,7 @@ public class Latency extends Module {
             if (entry.entryTime + entry.delay <= c) {
                 dontRepeat.add(entry.packet);
                 entries.remove(entry);
-                mc.getNetworkHandler().sendPacket(entry.packet);
+                mc.getConnection().send(entry.packet);
             }
         }
     }
@@ -94,7 +95,7 @@ public class Latency extends Module {
         Spoof
     }
 
-    private record PacketEntry(Packet<?> packet, double delay, long entryTime) {
+    private record PacketEntry(Packet<?> packet, int delay, long entryTime) {
 
     }
 }

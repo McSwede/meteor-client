@@ -25,7 +25,6 @@ import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.gui.WidgetScreen;
 import meteordevelopment.meteorclient.mixininterface.IMinecraft;
 import meteordevelopment.meteorclient.mixininterface.IVec3;
-import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.misc.InventoryTweaks;
 import meteordevelopment.meteorclient.systems.modules.movement.GUIMove;
@@ -36,8 +35,6 @@ import meteordevelopment.meteorclient.systems.modules.render.Freecam;
 import meteordevelopment.meteorclient.systems.modules.world.HighwayBuilder;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.CPSUtils;
-import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
-import meteordevelopment.meteorclient.utils.network.OnlinePlayers;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -53,12 +50,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
-import org.meteordev.starscript.Script;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -132,8 +127,6 @@ public abstract class MinecraftMixin implements IMinecraft {
 
     @Inject(at = @At("HEAD"), method = "tick")
     private void onPreTick(CallbackInfo ci) {
-        OnlinePlayers.update();
-
         startUseItemCalled = false;
 
         Profiler.get().push(MeteorClient.MOD_ID + "_pre_update");
@@ -228,21 +221,6 @@ public abstract class MinecraftMixin implements IMinecraft {
     @ModifyReturnValue(method = "reloadResourcePacks(ZLnet/minecraft/client/Minecraft$GameLoadCookie;)Ljava/util/concurrent/CompletableFuture;", at = @At("RETURN"))
     private CompletableFuture<Void> onReloadResourcePacksNewCompletableFuture(CompletableFuture<Void> original) {
         return original.thenRun(() -> MeteorClient.EVENT_BUS.post(ResourcePacksReloadedEvent.get()));
-    }
-
-    @ModifyArg(method = "updateTitle", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;setTitle(Ljava/lang/String;)V"))
-    private String setTitle(String original) {
-        if (Config.get() == null || !Config.get().customWindowTitle.get()) return original;
-
-        String customTitle = Config.get().customWindowTitleText.get();
-        Script script = MeteorStarscript.compile(customTitle);
-
-        if (script != null) {
-            String title = MeteorStarscript.run(script);
-            if (title != null) customTitle = title;
-        }
-
-        return customTitle;
     }
 
     // Have to add this condition if we want to draw back a bow using packets, without it getting cancelled by vanilla code

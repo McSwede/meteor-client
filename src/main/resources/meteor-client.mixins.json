@@ -184,7 +184,6 @@
     "SlotMixin",
     "SoundEngineMixin",
     "SpawnerRendererMixin",
-    "SplashManagerMixin",
     "StringDecomposerMixin",
     "StringSplitterAccessor",
     "StringUtilMixin",
@@ -194,7 +193,6 @@
     "Vec3Mixin",
     "VisGraphMixin",
     "WebBlockMixin",
-    "WingsLayerMixin",
     "WorldBorderMixin",
     "YggdrasilMinecraftSessionServiceAccessor"
   ],
